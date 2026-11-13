@@ -1,6 +1,6 @@
 name: What the Hue
 slug: what_the_hue
-version: "1.0.0"
+version: "1.0.1"
 description: Send a Philips Hue serial-number Touchlink reset from a Z-Stack Zigbee coordinator.
 url: https://github.com/DrB0rk/what-the-hue/tree/main/what_the_hue
 image: ghcr.io/drb0rk/what-the-hue

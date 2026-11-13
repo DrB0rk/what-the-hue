@@ -4,14 +4,10 @@ const fs = require("node:fs");
 const http = require("node:http");
 const path = require("node:path");
 const WebSocket = require("ws");
-const { ZStackAdapter } = require("zigbee-herdsman/dist/adapter/z-stack/adapter/zStackAdapter");
-const { Queue } = require("zigbee-herdsman/dist/utils/queue");
-const { Touchlink } = require("zigbee-herdsman/dist/controller/touchlink");
-const { Subsystem } = require("zigbee-herdsman/dist/adapter/z-stack/unpi/constants");
-const Zcl = require("zigbee-herdsman/dist/zspec/zcl");
+const { ZStackCoordinator } = require("./lib/coordinators/zstack");
+const hue = require("./lib/methods/hue-serial");
 
 const PORT = 8099;
-const CHANNELS = [11, 15, 20, 25, 12, 13, 14, 16, 17, 18, 19, 21, 22, 23, 24, 26];
 const supervisorToken = process.env.SUPERVISOR_TOKEN;
 const options = JSON.parse(fs.readFileSync("/data/options.json", "utf8"));
 const serialPath = options.device;
@@ -172,46 +168,6 @@ async function refreshStatus() {
   return cachedStatus;
 }
 
-function makeResetFrame(serialNumber, extendedPanId) {
-  const manufacturerCode = Zcl.ManufacturerCode.SIGNIFY_NETHERLANDS_B_V;
-  const clusters = {
-    manuSpecificPhilipsPairing: {
-      name: "manuSpecificPhilipsPairing",
-      ID: 0x1000,
-      manufacturerCode,
-      attributes: {},
-      commands: {
-        hueResetRequest: {
-          name: "hueResetRequest",
-          ID: 0,
-          parameters: [
-            { name: "extendedPanId", type: Zcl.DataType.IEEE_ADDR },
-            { name: "serialCount", type: Zcl.DataType.UINT8 },
-            { name: "serialNumbers", type: Zcl.BuffaloZclDataType.LIST_UINT32 },
-          ],
-        },
-      },
-      commandsResponse: {},
-    },
-  };
-
-  return Zcl.Frame.create(
-    Zcl.FrameType.SPECIFIC,
-    Zcl.Direction.CLIENT_TO_SERVER,
-    true,
-    manufacturerCode,
-    0,
-    "hueResetRequest",
-    "manuSpecificPhilipsPairing",
-    {
-      extendedPanId: `0x${extendedPanId}`,
-      serialCount: 1,
-      serialNumbers: [Number.parseInt(serialNumber, 16)],
-    },
-    clusters,
-  );
-}
-
 async function performReset(serialNumber) {
   operation.running = true;
   operation.state = "preparing";
@@ -223,29 +179,17 @@ async function performReset(serialNumber) {
   let entryId;
   let zhaDisabled = false;
   let adapter;
-  let adapterOpen = false;
-  let touchlink;
   let cleanupPromise;
 
   const cleanup = async () => {
     if (cleanupPromise) return cleanupPromise;
     cleanupPromise = (async () => {
-      if (touchlink) {
+      if (adapter) {
         try {
-          await touchlink.restoreChannelInterPAN();
-          note("Restored the coordinator's Zigbee channel.");
-        } catch (error) {
-          note(`Could not restore the Inter-PAN channel: ${error.message}`);
-        }
-      }
-      if (adapterOpen) {
-        try {
-          await adapter.znp.close();
-          note("Closed the coordinator connection.");
+          await adapter.close(note);
         } catch (error) {
           note(`Could not close the coordinator cleanly: ${error.message}`);
         }
-        adapterOpen = false;
       }
       if (zhaDisabled && ha) {
         setStage("restoring", "Re-enabling ZHA.");
@@ -299,26 +243,13 @@ async function performReset(serialNumber) {
     zhaState = "not_loaded";
 
     setStage("opening_radio", "Opening the Zigbee coordinator.");
-    adapter = new ZStackAdapter({}, { path: serialPath, baudRate: 115200, rtscts: false }, "", {});
-    adapter.queue = new Queue(1);
-    adapterOpen = true;
-    await adapter.znp.open();
-    const version = await adapter.znp.requestWithReply(Subsystem.SYS, "version", {});
-    adapter.version = version.payload;
-    const endpoint = require("zigbee-herdsman/dist/adapter/z-stack/adapter/endpoints").Endpoints.find((item) => item.endpoint === 12);
-    if (!endpoint) throw new Error("The Zigbee adapter library could not register its Touchlink endpoint.");
-    await adapter.znp.request(Subsystem.AF, "register", endpoint);
-    touchlink = new Touchlink(adapter);
-
-    const frame = makeResetFrame(serialNumber, extendedPanId);
+    adapter = new ZStackCoordinator(serialPath);
+    await adapter.open();
+    const frame = hue.makeResetFrame(serialNumber, extendedPanId);
     note("Sending the serial-targeted Philips reset across supported channels.");
-    for (let index = 0; index < CHANNELS.length; index += 1) {
-      const channel = CHANNELS[index];
-      setStage("sending", `Sending the targeted reset on Zigbee channel ${channel} (${index + 1}/${CHANNELS.length}).`);
-      await touchlink.setChannelInterPAN(channel);
-      await adapter.sendZclFrameInterPANBroadcast(frame, 10000, true);
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-    }
+    await adapter.sweep(frame, (channel, index, total) => {
+      setStage("sending", `Sending the targeted reset on Zigbee channel ${channel} (${index + 1}/${total}).`);
+    });
     setStage("restoring", "The channel sweep is complete. Restoring ZHA.");
   } catch (error) {
     operation.error = error.message;

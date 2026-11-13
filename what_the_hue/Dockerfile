@@ -8,6 +8,7 @@ RUN npm ci --omit=dev \
     && apk del python3 build-base linux-headers
 
 COPY server.js ./server.js
+COPY lib ./lib
 COPY public ./public
 
 CMD ["node", "server.js"]
