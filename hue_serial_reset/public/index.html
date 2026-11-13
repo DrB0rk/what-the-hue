@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    <title>Hue serial reset</title>
+    <link rel="stylesheet" href="app.css">
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <main class="page">
+      <header class="page-header">
+        <div class="eyebrow">HOME ASSISTANT APP</div>
+        <h1>Hue serial reset</h1>
+        <p class="lede">Send a targeted Touchlink reset to one Philips Hue bulb using its printed serial number.</p>
+      </header>
+
+      <section class="connection" aria-label="Coordinator status">
+        <div class="connection-item">
+          <span class="state-dot" id="coordinator-dot" aria-hidden="true"></span>
+          <div>
+            <div class="connection-label">Coordinator</div>
+            <div class="connection-value" id="device-state">Checking selected serial device…</div>
+          </div>
+        </div>
+        <div class="connection-item">
+          <span class="state-dot" id="zha-dot" aria-hidden="true"></span>
+          <div>
+            <div class="connection-label">Zigbee Home Automation</div>
+            <div class="connection-value" id="zha-state">Checking ZHA…</div>
+          </div>
+        </div>
+      </section>
+      <p id="status-message" class="status-message" role="status"></p>
+
+      <section class="reset-panel" aria-labelledby="target-title">
+        <div class="section-heading">
+          <div>
+            <h2 id="target-title">Choose the bulb</h2>
+            <p>Use the six-character serial printed on the bulb, such as <code>92F796</code>.</p>
+          </div>
+        </div>
+
+        <form id="reset-form">
+          <label for="serial">Bulb serial number</label>
+          <input id="serial" name="serial" type="text" inputmode="text" autocomplete="off" autocapitalize="characters" maxlength="6" minlength="6" pattern="[0-9A-Fa-f]{6}" placeholder="92F796" required aria-describedby="serial-help">
+          <div id="serial-help" class="field-help">Enter the six hexadecimal characters exactly as printed.</div>
+
+          <label for="confirm-serial" class="confirm-label">Confirm the target</label>
+          <input id="confirm-serial" name="confirm-serial" type="text" inputmode="text" autocomplete="off" autocapitalize="characters" maxlength="6" minlength="6" pattern="[0-9A-Fa-f]{6}" placeholder="Type the same serial again" required>
+
+          <label class="ready-check">
+            <input id="bulb-ready" type="checkbox" required>
+            <span>The bulb is powered on and within 10 cm of the Zigbee coordinator.</span>
+          </label>
+
+          <aside class="notice" aria-label="What this reset does">
+            <strong>This disconnects the selected bulb from its current Zigbee network.</strong>
+            <span>ZHA pauses during the reset and resumes automatically afterward. Other Zigbee devices and the network key are left alone.</span>
+          </aside>
+
+          <button id="submit-button" type="submit" disabled>Send reset to this bulb</button>
+          <div id="form-error" class="form-error" role="alert" hidden></div>
+        </form>
+      </section>
+
+      <section class="operation-panel" aria-labelledby="operation-title" aria-live="polite">
+        <div class="operation-header">
+          <h2 id="operation-title">Operation</h2>
+          <span id="operation-state" class="operation-state">Ready when the coordinator is available</span>
+        </div>
+        <p id="operation-summary" class="operation-summary">Keep the bulb close while the app sends the reset across the supported Zigbee channels.</p>
+        <ol id="operation-log" class="operation-log"></ol>
+        <div id="next-step" class="next-step" hidden>
+          Reset complete. In Home Assistant, open <strong>Settings → Devices & services → ZHA → Add device</strong> to pair the bulb.
+        </div>
+      </section>
+
+      <footer>
+        <a href="https://github.com/DrB0rk/hue-serial-reset" target="_blank" rel="noreferrer">Source and setup guide</a>
+      </footer>
+    </main>
+  </body>
+</html>

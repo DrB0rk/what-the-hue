@@ -1,0 +1,21 @@
+name: Hue Serial Reset
+slug: hue_serial_reset
+version: "1.0.0"
+description: Send a Philips Hue serial-number Touchlink reset from a Z-Stack Zigbee coordinator.
+url: https://github.com/DrB0rk/hue-serial-reset/tree/main/hue_serial_reset
+image: ghcr.io/drb0rk/hue-serial-reset
+arch:
+  - amd64
+  - aarch64
+startup: application
+boot: auto
+init: false
+ingress: true
+ingress_port: 8099
+panel_icon: mdi:lightbulb-alert
+panel_title: Hue reset
+homeassistant_api: true
+options:
+  device: null
+schema:
+  device: "device(subsystem=tty)"

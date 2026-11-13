@@ -1,0 +1,4 @@
+configuration:
+  device:
+    name: Zigbee coordinator
+    description: Select the same serial coordinator used by ZHA.

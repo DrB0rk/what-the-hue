@@ -1,0 +1,13 @@
+{
+  "name": "hue-serial-reset-app",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Home Assistant app for targeted Philips Hue serial-number resets",
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "ws": "^8.18.3",
+    "zigbee-herdsman": "^11.2.1"
+  }
+}
