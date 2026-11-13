@@ -1,4 +1,4 @@
-# Hue Serial Reset
+# What the Hue
 
 A Home Assistant app for sending a Philips Hue serial-number Touchlink reset through a Z-Stack Zigbee coordinator. It is intended for bulbs that cannot be reset with their normal power-cycle sequence.
 
@@ -7,8 +7,8 @@ The app pauses ZHA briefly, sends the reset only to the entered six-character bu
 ## Install
 
 1. In Home Assistant, open **Settings → Apps → App store → Repositories**.
-2. Add `https://github.com/DrB0rk/hue-serial-reset`.
-3. Install **Hue Serial Reset**.
+2. Add `https://github.com/DrB0rk/what-the-hue`.
+3. Install **What the Hue**.
 4. In the app configuration, select the same serial coordinator used by ZHA, then start the app.
 5. Open the app's web interface, enter the bulb serial printed on the label, confirm it, and check that the bulb is powered on close to the coordinator.
 
@@ -26,4 +26,4 @@ This app uses the Zigbee-herdsman Z-Stack adapter. It is for Z-Stack coordinator
 - The entered serial number is validated and must be typed twice. The Zigbee network backup is held in memory only; its network key is neither stored nor logged.
 - Keep the bulb powered on and within 10 cm of the coordinator for the reset.
 
-See [the app guide](hue_serial_reset/DOCS.md) for setup and recovery details.
+See [the app guide](what_the_hue/DOCS.md) for setup and recovery details.

@@ -417,7 +417,7 @@ const server = http.createServer(async (req, res) => {
   return response(res, 404, { error: "Not found." });
 });
 
-server.listen(PORT, "0.0.0.0", () => console.log(`Hue serial reset app listening on ${PORT}`));
+server.listen(PORT, "0.0.0.0", () => console.log(`What the Hue app listening on ${PORT}`));
 
 async function shutdown() {
   server.close();

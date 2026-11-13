@@ -1,4 +1,4 @@
-# Hue Serial Reset app guide
+# What the Hue app guide
 
 This app sends the Philips manufacturer-specific serial-number Touchlink reset used to recover a Hue bulb that will not reset through its usual power-cycle sequence.
 
@@ -14,8 +14,8 @@ Supported coordinators include the TI CC2652-based Sonoff Zigbee 3.0 USB Dongle 
 
 ## Install and configure
 
-1. Add `https://github.com/DrB0rk/hue-serial-reset` under **Settings → Apps → App store → Repositories**.
-2. Install **Hue Serial Reset**.
+1. Add `https://github.com/DrB0rk/what-the-hue` under **Settings → Apps → App store → Repositories**.
+2. Install **What the Hue**.
 3. Open the app's **Configuration** tab and select the same USB serial coordinator configured in ZHA.
 4. Save the configuration and start the app.
 5. Open **Open Web UI**.
@@ -59,7 +59,7 @@ Open the app configuration, choose the same stable `/dev/serial/by-id/...` entry
 
 ### ZHA is not loaded
 
-Start or reload ZHA, confirm its coordinator is working, and refresh the Hue Serial Reset page. The app will not use the radio if it cannot find exactly one loaded ZHA entry.
+Start or reload ZHA, confirm its coordinator is working, and refresh the What the Hue page. The app will not use the radio if it cannot find exactly one loaded ZHA entry.
 
 ### The bulb does not react
 
@@ -75,4 +75,4 @@ This app uses the Z-Stack coordinator protocol. It does not work with Silicon La
 
 ## Source and license
 
-Source: [github.com/DrB0rk/hue-serial-reset](https://github.com/DrB0rk/hue-serial-reset). Licensed under MIT.
+Source: [github.com/DrB0rk/what-the-hue](https://github.com/DrB0rk/what-the-hue). Licensed under MIT.
