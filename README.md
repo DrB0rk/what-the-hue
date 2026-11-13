@@ -1,29 +1,120 @@
-# What the Hue
+<div align="center">
 
-A Home Assistant app for sending a Philips Hue serial-number Touchlink reset through a Z-Stack Zigbee coordinator. It is intended for bulbs that cannot be reset with their normal power-cycle sequence.
+<img src="assets/what-the-hue-banner.svg" alt="What the Hue: a small Hue bulb with Zigbee signal rings" width="100%">
 
-The app pauses ZHA briefly, sends the reset only to the entered six-character bulb serial, and restores ZHA. It reads the active Zigbee extended PAN ID from a ZHA network backup; it does not ask for or store the network key.
+### Get a stubborn Hue bulb back into pairing mode
 
-## Install
+What the Hue sends a serial-number Touchlink reset from your Home Assistant Z-Stack coordinator, then brings ZHA back up so you can pair the bulb again.
 
-1. In Home Assistant, open **Settings → Apps → App store → Repositories**.
-2. Add `https://github.com/DrB0rk/what-the-hue`.
-3. Install **What the Hue**.
-4. In the app configuration, select the same serial coordinator used by ZHA, then start the app.
-5. Open the app's web interface, enter the bulb serial printed on the label, confirm it, and check that the bulb is powered on close to the coordinator.
+[![Add repository to Home Assistant](https://my.home-assistant.io/badges/supervisor_add_addon_repository.svg)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2FDrB0rk%2Fwhat-the-hue)
 
-When the reset finishes and ZHA is loaded again, open **Settings → Devices & services → ZHA → Add device** to pair the bulb.
+[![Home Assistant app](https://img.shields.io/badge/Home%20Assistant-App-18BCF2?logo=homeassistant&logoColor=white)](https://www.home-assistant.io/installation/)
+[![Architectures](https://img.shields.io/badge/arch-amd64%20%7C%20aarch64-526480)](#compatibility)
+[![License: MIT](https://img.shields.io/badge/License-MIT-526480.svg)](LICENSE)
+[![Build app](https://github.com/DrB0rk/what-the-hue/actions/workflows/builder.yaml/badge.svg)](https://github.com/DrB0rk/what-the-hue/actions/workflows/builder.yaml)
 
-## Compatibility
+</div>
 
-This app uses the Zigbee-herdsman Z-Stack adapter. It is for Z-Stack coordinators such as the TI CC2652-based Sonoff Zigbee 3.0 USB Dongle Plus (Dongle-P). It does not support Silicon Labs Ember coordinators such as the Dongle-E.
+> **Quick install:** click the Home Assistant button above to add the repository. Then find **What the Hue** in **Settings → Apps → App Store**, install it, and choose the same Zigbee USB coordinator that ZHA uses.
+
+## What it does
+
+Some Philips Hue bulbs ignore the usual power-cycle reset sequence. What the Hue sends the Philips serial-number reset over Zigbee Touchlink. You enter the six-character serial printed on the bulb, keep the bulb powered on close to the coordinator, and start the reset from a small Home Assistant app page.
+
+During the reset, the app briefly unloads ZHA to release its coordinator, sends the command across Zigbee channels 11–26, then re-enables ZHA. When ZHA is back, add the bulb from **Settings → Devices & services → ZHA → Add device**.
+
+```mermaid
+flowchart LR
+    A[Choose bulb serial] --> B[Confirm bulb is on and within 10 cm]
+    B --> C[Pause ZHA briefly]
+    C --> D[Send Philips Touchlink reset]
+    D --> E[Restore ZHA]
+    E --> F[Add bulb in ZHA]
+```
+
+## Requirements
+
+| Requirement | Details |
+| --- | --- |
+| Home Assistant | Home Assistant OS or Supervised, with the Apps store |
+| Zigbee integration | ZHA must be loaded and using the coordinator you select in this app |
+| Coordinator | A TI Z-Stack adapter, such as the Sonoff Zigbee 3.0 USB Dongle Plus **Dongle-P** |
+| Bulb | Powered on, with its six-character hexadecimal serial number available |
+| Proximity | Place the bulb within **10 cm** of the coordinator for the reset |
+
+**Not supported:** Silicon Labs Ember adapters, including the Sonoff Dongle-E. This app opens the coordinator with the Z-Stack driver; it cannot safely control another adapter family.
+
+## Install and configure
+
+### 1. Add the app repository
+
+Use the **Add repository** button at the top of this page. If the button does not open the repository dialog in your Home Assistant version, add it manually:
+
+1. Open **Settings → Apps → App Store**.
+2. Open the menu in the upper-right corner, choose **Repositories**, then **Add**.
+3. Enter `https://github.com/DrB0rk/what-the-hue` and submit.
+
+### 2. Install What the Hue
+
+Find **What the Hue** in the App Store and install it. Open its **Configuration** tab and choose the same stable serial device that ZHA uses, preferably a `/dev/serial/by-id/...` path. Save the configuration, start the app, and select **Open Web UI**.
+
+### 3. Reset and pair the bulb
+
+1. Read the six hexadecimal characters from the bulb label, for example `92F796`.
+2. Enter the serial twice in the app so the two values match.
+3. Switch the bulb on and place it within 10 cm of the coordinator.
+4. Confirm the proximity checkbox and choose **Send reset to this bulb**.
+5. Leave the bulb and coordinator powered. Wait for the operation log to say **ZHA is loaded again**.
+6. In Home Assistant, open **Settings → Devices & services → ZHA → Add device** and pair the bulb.
+
+The channel sweep takes about 20 seconds. Do not stop the app or unplug the coordinator during the reset.
 
 ## Safety and privacy
 
-- The app is idle until you submit a reset.
-- It requires the Home Assistant Core API so it can pause and restore ZHA. Treat this permission like an administrator credential.
-- It temporarily unloads the one loaded ZHA config entry and opens the selected serial device directly. Do not stop the app or unplug the coordinator while a reset is running.
-- The entered serial number is validated and must be typed twice. The Zigbee network backup is held in memory only; its network key is neither stored nor logged.
-- Keep the bulb powered on and within 10 cm of the coordinator for the reset.
+- The app does nothing to the coordinator until you submit a reset.
+- Home Assistant grants the app Core API access so it can request a ZHA network backup and unload/reload ZHA. Treat this as administrator-level access.
+- The app reads the network's extended PAN ID from the backup. It does not store the backup or network key.
+- The bulb serial stays in memory for the operation. The app does not save it to disk.
+- The app opens the configured coordinator directly while ZHA is unloaded. Do not run another coordinator tool at the same time.
+- If an error happens after ZHA unloads, the app attempts to restore it. If ZHA does not return, reload ZHA from **Settings → Devices & services → ZHA**.
 
-See [the app guide](what_the_hue/DOCS.md) for setup and recovery details.
+## Troubleshooting
+
+<details>
+<summary>The app says no coordinator is selected</summary>
+
+Open the app's **Configuration** tab, choose the same USB serial device used by ZHA, save, and restart the app. Prefer the stable `/dev/serial/by-id/...` entry when it is available.
+
+</details>
+
+<details>
+<summary>The app says ZHA is not loaded</summary>
+
+Check that ZHA and its coordinator are working, then refresh the app page. What the Hue only runs while it finds exactly one loaded ZHA entry.
+
+</details>
+
+<details>
+<summary>The bulb does not react</summary>
+
+Check the serial on the bulb itself, switch it on, and move it closer to the dongle. Run the reset again if needed. A powered fixture or enclosure can reduce Zigbee range.
+
+</details>
+
+<details>
+<summary>ZHA did not come back</summary>
+
+Open **Settings → Devices & services → ZHA** and reload the integration. If ZHA still cannot load, restart Home Assistant. Do not start another process that opens the coordinator while ZHA recovers.
+
+</details>
+
+## Project links
+
+- [Full app guide](what_the_hue/DOCS.md)
+- [Report an issue](https://github.com/DrB0rk/what-the-hue/issues)
+- [Source code](https://github.com/DrB0rk/what-the-hue)
+- [MIT license](LICENSE)
+
+<div align="center">
+<sub>Made for the one bulb that just would not reset.</sub>
+</div>

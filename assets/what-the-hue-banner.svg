@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="360" viewBox="0 0 1200 360" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="36" y1="20" x2="1153" y2="351" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#172538"/>
+      <stop offset=".56" stop-color="#17202C"/>
+      <stop offset="1" stop-color="#111821"/>
+    </linearGradient>
+    <linearGradient id="bulb" x1="934" y1="84" x2="1034" y2="239" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFF9D5"/>
+      <stop offset="1" stop-color="#F4C95D"/>
+    </linearGradient>
+    <linearGradient id="glow" x1="972" y1="178" x2="972" y2="305" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F4C95D" stop-opacity=".35"/>
+      <stop offset="1" stop-color="#F4C95D" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="shadow" x="852" y="43" width="270" height="286" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse">
+      <feGaussianBlur stdDeviation="18"/>
+    </filter>
+  </defs>
+  <rect width="1200" height="360" rx="24" fill="url(#bg)"/>
+  <path d="M0 294H1200" stroke="#314153" stroke-opacity=".72"/>
+  <path d="M0 302H1200" stroke="#253447" stroke-opacity=".65"/>
+  <path d="M0 310H1200" stroke="#253447" stroke-opacity=".42"/>
+  <path d="M55 0V360M95 0V360M135 0V360M175 0V360M215 0V360" stroke="#253447" stroke-opacity=".24"/>
+  <circle cx="983" cy="175" r="81" fill="#F4C95D" fill-opacity=".2" filter="url(#shadow)"/>
+  <path d="M922 109c0-33 27-60 60-60s60 27 60 60c0 23-12 38-25 54-9 11-13 22-14 35h-42c-1-13-5-24-14-35-13-16-25-31-25-54Z" fill="url(#bulb)" stroke="#FFF8DF" stroke-width="3"/>
+  <path d="M959 202h46M961 214h42M966 226h32" stroke="#53616C" stroke-width="5" stroke-linecap="round"/>
+  <path d="M974 232h18v17h-18z" fill="#D6A832"/>
+  <path d="M929 193 867 278h207l-62-85" fill="url(#glow)"/>
+  <path d="M1059 95c20 12 33 34 33 59M1082 74c28 18 47 49 47 84M904 94c-19 12-32 34-32 60M880 74c-28 18-47 49-47 84" stroke="#F4C95D" stroke-width="4" stroke-linecap="round" stroke-opacity=".55"/>
+  <circle cx="1091" cy="265" r="5" fill="#73C7B5"/>
+  <circle cx="1109" cy="265" r="5" fill="#73C7B5" fill-opacity=".65"/>
+  <circle cx="1127" cy="265" r="5" fill="#73C7B5" fill-opacity=".35"/>
+  <rect x="69" y="77" width="146" height="31" rx="15.5" fill="#26364A" stroke="#35485F"/>
+  <circle cx="88" cy="92.5" r="5" fill="#77D2BF"/>
+  <text x="103" y="98" fill="#B9C8D8" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="13" font-weight="650" letter-spacing="1.4">HOME ASSISTANT APP</text>
+  <text x="66" y="176" fill="#F4F6F9" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="64" font-weight="750" letter-spacing="-2.6">What the Hue</text>
+  <text x="70" y="218" fill="#BDCAD7" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="23" font-weight="450">A serial-number reset for the Hue bulb</text>
+  <text x="70" y="249" fill="#BDCAD7" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="23" font-weight="450">that refuses to go into pairing mode.</text>
+  <rect x="70" y="276" width="154" height="38" rx="19" fill="#27394B"/>
+  <text x="91" y="300" fill="#DCE7F1" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="14" font-weight="600">ZHA · Z-STACK</text>
+  <path d="M252 295h67" stroke="#53677D" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="329" cy="295" r="4" fill="#F4C95D"/>
+  <text x="350" y="300" fill="#9DADBF" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="14" font-weight="550" letter-spacing=".4">A tiny tool for a very specific bulb problem</text>
+</svg>
